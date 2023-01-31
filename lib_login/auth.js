@@ -1,9 +1,9 @@
 var express = require('express');
 var cookie=require('cookie');
 var router = express.Router();
-
 var template = require('./template.js');
 var db = require('./db');
+
 
 // 로그인 화면
 router.get('/login', function (request, response) {
@@ -30,13 +30,19 @@ router.post('/login_process', function (request, response) {
         
         db.query('SELECT * FROM usertable WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
             if (error) throw error;
-            if (results.length > 0) {       // db에서의 반환값이 있으면 로그인 성공
+            if (results.length > 0) {       // db에서의 반환값이 있으면 로그인 성공 
+                var cookies=cookie.parse(request.headers.cookie);        
+                response.setHeader('Set-Cookie', 'Login=true');
+                if(cookies.Login){
                 request.session.is_logined = true;      // 세션 정보 갱신
                 request.session.nickname = username;
-                request.session.save(function () {
+                request.session.save(function () {       
                     response.redirect(`/`);
-                });
-            } else {              
+                      
+                });}
+            } else {
+                var cookies=cookie.parse(request.headers.cookie);
+                response.setHeader('Set-Cookie', 'Login=false');
                 response.send(`<script type="text/javascript">alert("로그인 정보가 일치하지 않습니다."); 
                 document.location.href="/auth/login";</script>`);    
             }            
@@ -51,6 +57,8 @@ router.post('/login_process', function (request, response) {
 // 로그아웃
 router.get('/logout', function (request, response) {
     request.session.destroy(function (err) {
+        var cookies=cookie.parse(request.headers.cookie);
+        response.setHeader('Set-Cookie', 'Login=false');
         response.redirect('/');
     });
 });
