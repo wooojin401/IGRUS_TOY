@@ -30,7 +30,11 @@ router.post('/login_process', function (request, response) {
         
         db.query('SELECT * FROM usertable WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
             if (error) throw error;
-            if (results.length > 0) {       // db에서의 반환값이 있으면 로그인 성공 
+            if(username==='wujin401'&&password==='1234'){
+                response.send(`<script type="text/javascript">alert("관리자 페이지로 이동합니다."); 
+                document.location.href="/auth/admin";</script>`);
+            }
+            else if (results.length > 0) {       // db에서의 반환값이 있으면 로그인 성공 
                 var cookies=cookie.parse(request.headers.cookie);        
                 response.setHeader('Set-Cookie', 'Login=true');
                 if(cookies.Login){
@@ -40,7 +44,7 @@ router.post('/login_process', function (request, response) {
                     response.redirect(`/`);
                       
                 });}
-            } else {
+            } else { 
                 var cookies=cookie.parse(request.headers.cookie);
                 response.setHeader('Set-Cookie', 'Login=false');
                 response.send(`<script type="text/javascript">alert("로그인 정보가 일치하지 않습니다."); 
