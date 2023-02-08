@@ -1,24 +1,14 @@
-var express = require('express');
 var _url = request.url;
-const mysql = require('mysql');
-
-function templateHTML(title, list, body,control){ //달라질 수 있는 부분을 통해 다시 사용할 수 있다 
-    return `
-    <!doctype html>
-    <html>
-    <head>
-      <title>수강</title>
-      <meta charset="utf-8">
-    </head>
-    <body>
-      <h1><a href="/">수강신청</a></h1>
-      ${list}  
-      ${control}
-      ${body}
-    </body>
-    </html>
-    `;
-}
+var express = require('express')
+var session = require('express-session')
+var cookieParser=require('cookie-parser');
+var bodyParser = require('body-parser');
+var FileStore = require('session-file-store')(session)
+var authRouter = require('./lib_login/auth.js');
+var authCheck = require('./lib_login/authCheck.js');
+var template = require('./lib_login/template.js');
+const app = express()
+const port = 3000
 
 function check(){
     var frm = document.getElementById("form"); //주어진 문자열과 일치하는 id 속성을 가진 요소를 찾기
@@ -94,10 +84,6 @@ function check(){
                         <td class="deltd_1"></td>
                         <td class="deltd_1"></td>
                         <td class="deltd_1"></td>
-                        <td class="deltd_1"></td>
-                        <td class="deltd_1"></td>
-                        <td class="deltd_1"></td>
-                        <td class="deltd_1"></td>
                         <td><input type ="button" value="취소" class="delete_btn_1"/></td> 
                     </tr>
                     
@@ -106,17 +92,9 @@ function check(){
                         <td class="deltd_2"></td>
                         <td class="deltd_2"></td>
                         <td class="deltd_2"></td>
-                        <td class="deltd_2"></td>
-                        <td class="deltd_2"></td>
-                        <td class="deltd_2"></td>
-                        <td class="deltd_2"></td>
                         <td><input type ="button" value="취소" class="delete_btn_2"/></td>
                     </tr>
                     <tr id="add_3" class="temp_3">
-                        <td class="deltd_3"></td>
-                        <td class="deltd_3"></td>
-                        <td class="deltd_3"></td>
-                        <td class="deltd_3"></td>
                         <td class="deltd_3"></td>
                         <td class="deltd_3"></td>
                         <td class="deltd_3"></td>
@@ -129,10 +107,6 @@ function check(){
                         <td class="deltd_4"></td>
                         <td class="deltd_4"></td>
                         <td class="deltd_4"></td>
-                        <td class="deltd_4"></td>
-                        <td class="deltd_4"></td>
-                        <td class="deltd_4"></td>
-                        <td class="deltd_4"></td>
                         <td><input type ="button" value="취소" class="delete_btn_4"/></td>
                     </tr>
 
@@ -140,4 +114,3 @@ function check(){
     </form>
 </body>
 </html>
-
